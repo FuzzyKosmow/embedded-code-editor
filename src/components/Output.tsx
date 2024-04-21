@@ -10,7 +10,7 @@ interface OutputProps {
 
 const Output = ({ editorRef, language }: OutputProps) => {
   const toasts = useToast();
-  const [output, setOutput] = useState(null);
+  const [output, setOutput] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const runCode = async () => {
@@ -19,7 +19,7 @@ const Output = ({ editorRef, language }: OutputProps) => {
     try {
       setIsLoading(true);
       const { run: result } = await ExecuteCode(language, src);
-      setOutput(result.output);
+      setOutput(result.output.split("\n"));
       result.stderr ? setIsError(true) : setIsError(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -55,7 +55,11 @@ const Output = ({ editorRef, language }: OutputProps) => {
         borderColor={isError ? "red.500" : "gray.700"}
       >
         {output ? (
-          <pre>{output}</pre>
+          output.map((line, index) => (
+            <Text key={index} whiteSpace="pre-wrap">
+              {line}
+            </Text>
+          ))
         ) : (
           <Text color="gray.400"> Click run code to see the output</Text>
         )}
