@@ -15,6 +15,7 @@ const CodeEditor = () => {
     editorRef.current = editor;
     editor.focus();
   };
+
   const onSelectLanguage = (language: string) => {
     setLanguage(language);
 
@@ -34,6 +35,7 @@ const CodeEditor = () => {
             defaultLanguage={language}
             defaultValue={CODE_SNIPPETS[language]}
             value={value}
+            language={language}
             onChange={(value) => {
               value ? setValue(value) : setValue("");
             }}
