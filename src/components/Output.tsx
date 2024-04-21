@@ -1,4 +1,4 @@
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Text, useToast } from "@chakra-ui/react";
 import { editor } from "monaco-editor";
 import { ExecuteCode } from "../API";
 import { useState } from "react";
@@ -9,21 +9,39 @@ interface OutputProps {
 }
 
 const Output = ({ editorRef, language }: OutputProps) => {
+  const toasts = useToast();
   const [output, setOutput] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const runCode = async () => {
     const src = editorRef.current?.getValue();
     if (!src) return;
     try {
+      setIsLoading(true);
       const { run: result } = await ExecuteCode(language, src);
       setOutput(result.output);
-    } catch (error) {
-      console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toasts({
+        title: "An error occurred.",
+        description: error ? String(error.message) : "Unknown error",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
     <Box w="50%" bg="#110c1b" color="white" p={4}>
       <Text>Output</Text>
-      <Button variant="outline" colorScheme="green" mb={4} onClick={runCode}>
+      <Button
+        variant="outline"
+        colorScheme="green"
+        mb={4}
+        onClick={runCode}
+        isLoading={isLoading}
+      >
         Run code
       </Button>
       <Box
