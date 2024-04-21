@@ -12,6 +12,7 @@ const Output = ({ editorRef, language }: OutputProps) => {
   const toasts = useToast();
   const [output, setOutput] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const runCode = async () => {
     const src = editorRef.current?.getValue();
     if (!src) return;
@@ -19,6 +20,7 @@ const Output = ({ editorRef, language }: OutputProps) => {
       setIsLoading(true);
       const { run: result } = await ExecuteCode(language, src);
       setOutput(result.output);
+      result.stderr ? setIsError(true) : setIsError(false);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toasts({
@@ -47,9 +49,10 @@ const Output = ({ editorRef, language }: OutputProps) => {
       <Box
         height="75vh"
         p={2}
+        color={isError ? "red.500" : "gray.400"}
         borderRadius={4}
         border="1px solid"
-        borderColor="#333"
+        borderColor={isError ? "red.500" : "gray.700"}
       >
         {output ? (
           <pre>{output}</pre>
