@@ -8,7 +8,8 @@ This is a lightweight code editor for the web. It is written in TypeScript and u
 - Code completion
 - Code formatting
 - Code execution
-  Support the following languages:
+
+Support the following languages:
 - JavaScript
 - TypeScript
 - Java
